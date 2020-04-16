@@ -9,6 +9,7 @@
  * @license    GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  */
 
+
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
@@ -83,7 +84,6 @@ $componentParams = $this->params; // will be removed just use $this->params inst
 	<div>
 		<input type="hidden" name="task" value="member.edit" />
 		<?php echo JHtml::_('form.token'); ?>
-	</div>
 	</div>
 </div>
 </form>

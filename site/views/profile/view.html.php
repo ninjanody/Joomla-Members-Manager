@@ -9,6 +9,7 @@
  * @license    GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  */
 
+
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.module.helper');
@@ -44,20 +45,23 @@ class MembersmanagerViewProfile extends JViewLegacy
 			throw new Exception(implode("\n", $errors), 500);
 		}
 		// Process the content plugins.
-		JPluginHelper::importPlugin('content');
-		// Setup Event Object.
-		$this->item->event = new stdClass;
-		// Check if item has params, or pass global params
-		$params = (isset($this->item->params) && MembersmanagerHelper::checkJson($this->item->params)) ? json_decode($this->item->params) : $this->params;
-		// onContentAfterTitle Event Trigger.
-		$results = $dispatcher->trigger('onContentAfterTitle', array('com_membersmanager.member', &$this->item, &$params, 0));
-		$this->item->event->onContentAfterTitle = trim(implode("\n", $results));
-		// onContentBeforeDisplay Event Trigger.
-		$results = $dispatcher->trigger('onContentBeforeDisplay', array('com_membersmanager.member', &$this->item, &$params, 0));
-		$this->item->event->onContentBeforeDisplay = trim(implode("\n", $results));
-		// onContentAfterDisplay Event Trigger.
-		$results = $dispatcher->trigger('onContentAfterDisplay', array('com_membersmanager.member', &$this->item, &$params, 0));
-		$this->item->event->onContentAfterDisplay = trim(implode("\n", $results));
+		if (MembersmanagerHelper::checkObject($this->item))
+		{
+			JPluginHelper::importPlugin('content');
+			// Setup Event Object.
+			$this->item->event = new stdClass;
+			// Check if item has params, or pass global params
+			$params = (isset($this->item->params) && MembersmanagerHelper::checkJson($this->item->params)) ? json_decode($this->item->params) : $this->params;
+			// onContentAfterTitle Event Trigger.
+			$results = $dispatcher->trigger('onContentAfterTitle', array('com_membersmanager.member', &$this->item, &$params, 0));
+			$this->item->event->onContentAfterTitle = trim(implode("\n", $results));
+			// onContentBeforeDisplay Event Trigger.
+			$results = $dispatcher->trigger('onContentBeforeDisplay', array('com_membersmanager.member', &$this->item, &$params, 0));
+			$this->item->event->onContentBeforeDisplay = trim(implode("\n", $results));
+			// onContentAfterDisplay Event Trigger.
+			$results = $dispatcher->trigger('onContentAfterDisplay', array('com_membersmanager.member', &$this->item, &$params, 0));
+			$this->item->event->onContentAfterDisplay = trim(implode("\n", $results));
+		}
 
 		parent::display($tpl);
 	}
@@ -101,33 +105,6 @@ class MembersmanagerViewProfile extends JViewLegacy
 			if ((!$HeaderCheck->js_loaded('uikit.min') || $uikit == 1) && $uikit != 2 && $uikit != 3)
 			{
 				$this->document->addScript(JURI::root(true) .'/media/com_membersmanager/uikit-v2/js/uikit'.$size.'.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript');
-			}
-
-			// Load the needed uikit components in this view.
-			$uikitComp = $this->get('UikitComp');
-			if ($uikit != 2 && isset($uikitComp) && MembersmanagerHelper::checkArray($uikitComp))
-			{
-				// load just in case.
-				jimport('joomla.filesystem.file');
-				// loading...
-				foreach ($uikitComp as $class)
-				{
-					foreach (MembersmanagerHelper::$uk_components[$class] as $name)
-					{
-						// check if the CSS file exists.
-						if (JFile::exists(JPATH_ROOT.'/media/com_membersmanager/uikit-v2/css/components/'.$name.$style.$size.'.css'))
-						{
-							// load the css.
-							$this->document->addStyleSheet(JURI::root(true) .'/media/com_membersmanager/uikit-v2/css/components/'.$name.$style.$size.'.css', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
-						}
-						// check if the JavaScript file exists.
-						if (JFile::exists(JPATH_ROOT.'/media/com_membersmanager/uikit-v2/js/components/'.$name.$size.'.js'))
-						{
-							// load the js.
-							$this->document->addScript(JURI::root(true) .'/media/com_membersmanager/uikit-v2/js/components/'.$name.$size.'.js', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('type' => 'text/javascript', 'async' => 'async') : true);
-						}
-					}
-				}
 			}
 		}
 		// Use Uikit Version 3
@@ -185,8 +162,9 @@ class MembersmanagerViewProfile extends JViewLegacy
 		$this->document->addScriptDeclaration("google.charts.load('current');");
 		// add var key
 		$this->document->addScriptDeclaration("var vastDevMod = '".$this->get('VDM')."';");
-		// add javascript lang strings
-		JText::script('COM_MEMBERSMANAGER_THERE_WAS_NO_REPORT_FOUND'); 
+		// add JavaScript lang strings
+		JText::script('COM_MEMBERSMANAGER_THERE_WAS_NO_REPORT_FOUND');
+		JText::script('COM_MEMBERSMANAGER_THERE_WAS_NO_MESSAGES_FOUND'); 
 		// add the document default css file
 		$this->document->addStyleSheet(JURI::root(true) .'/components/com_membersmanager/assets/css/profile.css', (MembersmanagerHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
 		// Set the Custom CSS script to view

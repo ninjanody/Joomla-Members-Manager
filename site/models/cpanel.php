@@ -9,6 +9,7 @@
  * @license    GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  */
 
+
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
@@ -81,8 +82,8 @@ class MembersmanagerModelCpanel extends JModelItem
 		{
 			$app = JFactory::getApplication();
 			$app->enqueueMessage(JText::_('COM_MEMBERSMANAGER_NOT_AUTHORISED_TO_VIEW_CPANEL'), 'error');
-			// redirect away to the default view if no access allowed.
-			$app->redirect(JRoute::_('index.php?option=com_membersmanager&view=members'));
+			// redirect away to the home page if no access allowed.
+			$app->redirect(JURI::root());
 			return false;
 		}
 		$this->userId = $this->user->get('id');
@@ -132,7 +133,7 @@ class MembersmanagerModelCpanel extends JModelItem
 					$app = JFactory::getApplication();
 					// If no data is found redirect to default page and show warning.
 					$app->enqueueMessage(JText::_('COM_MEMBERSMANAGER_NOT_FOUND_OR_ACCESS_DENIED'), 'warning');
-					$app->redirect(JRoute::_('index.php?option=com_membersmanager&view=members'));
+					$app->redirect(JURI::root());
 					return false;
 				}
 
@@ -162,7 +163,7 @@ class MembersmanagerModelCpanel extends JModelItem
 		else
 		{
 			$id = (int) $this->userId;
-		}			
+		}
 		// set the id and view name to session
 		if ($vdm = MembersmanagerHelper::get('user__'.$id))
 		{

@@ -9,13 +9,17 @@
  * @license    GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  */
 
+
 // No direct access to this file
 defined('JPATH_BASE') or die('Restricted access');
 
-
+// switch hidden state
+$hidden = ($displayData->setCharts) ? ' hidden' : '';
 
 ?>
-<div class="extra<?php echo $displayData->id; ?>" hidden>
+<?php if ($displayData->_USER->id > 0): ?>
+<div class="extra<?php echo $displayData->id; ?>"<?php echo $hidden; ?>>
+<?php endif; ?>
 <?php if ($displayData->setAssessment): ?>
 <div class="uk-overflow-auto uk-height-small">
 	<ul class="uk-list uk-list-striped">
@@ -76,4 +80,6 @@ defined('JPATH_BASE') or die('Restricted access');
 <?php else: ?>
 	<small><?php echo JText::sprintf('COM_MEMBERSMANAGER_NO_S_FOUND', MembersmanagerHelper::getButtonName('report', JText::_('COM_MEMBERSMANAGER_REPORTS'))); ?>...</small>
 <?php endif; ?>
+<?php if ($displayData->_USER->id > 0): ?>
 </div>
+<?php endif; ?>

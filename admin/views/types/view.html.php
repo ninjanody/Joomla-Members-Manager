@@ -9,6 +9,7 @@
  * @license    GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  */
 
+
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
@@ -134,6 +135,11 @@ class MembersmanagerViewTypes extends JViewLegacy
 				JToolBarHelper::custom('types.exportData', 'download', '', 'COM_MEMBERSMANAGER_EXPORT_DATA', true);
 			}
 		}
+		if ($this->user->authorise('type.update_types', 'com_membersmanager'))
+		{
+			// add Update Types button.
+			JToolBarHelper::custom('types.updateTypes', 'wrench', '', 'COM_MEMBERSMANAGER_UPDATE_TYPES', false);
+		}
 
 		if ($this->canDo->get('core.import') && $this->canDo->get('type.import'))
 		{
@@ -188,7 +194,15 @@ class MembersmanagerViewTypes extends JViewLegacy
 
 		// Set Add Relationship Selection
 		$this->add_relationshipOptions = $this->getTheAdd_relationshipSelections();
-		if ($this->add_relationshipOptions)
+		// We do some sanitation for Add Relationship filter
+		if (MembersmanagerHelper::checkArray($this->add_relationshipOptions) &&
+			isset($this->add_relationshipOptions[0]->value) &&
+			!MembersmanagerHelper::checkString($this->add_relationshipOptions[0]->value))
+		{
+			unset($this->add_relationshipOptions[0]);
+		}
+		// Only load Add Relationship filter if it has values
+		if (MembersmanagerHelper::checkArray($this->add_relationshipOptions))
 		{
 			// Add Relationship Filter
 			JHtmlSidebar::addFilter(
